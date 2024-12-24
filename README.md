@@ -16,7 +16,7 @@ The library should work with all ESP8266/ESP8285 boards that have a minimum of 4
 
 ## Dependencies
 
-The library requires ESP8266 core (min v.2.6.3) and several of it's built in libraries (ESP8266WiFi, ESP8266HTTPClient, ESP8266httpUpdate, FS & CertStoreBearSSL), ArduinoJSON (v6.x.x) and Time.  The last two should be automatically installed by the dependecny manager in Arduino 1.8.10+.
+The library requires ESP8266 core (min v.2.6.3) and several of it's built in libraries (ESP8266WiFi, ESP8266HTTPClient, ESP8266httpUpdate, FS & CertStoreBearSSL), GSON and Time.  The last two should be automatically installed by the dependecny manager in Arduino 1.8.10+.
 
 ## Certificates
 
