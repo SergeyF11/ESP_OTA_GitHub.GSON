@@ -43,8 +43,10 @@ ESPOTAGitHub::ESPOTAGitHub(BearSSL::X509List* certs, const char* user, const cha
     _cert(certs)
 {
     _init(user, repo,currentTag, binFile, preRelease);
-    _cert->append(GITHUB_CERTIFICATE_ROOT);
-    _cert->append(GITHUB_CERTIFICATE_ROOT1);
+    if ( _cert->getCount() == 0 ){
+        _cert->append(GITHUB_CERTIFICATE_ROOT);
+        _cert->append(GITHUB_CERTIFICATE_ROOT1);
+    }
     // _user = user;
     // _repo = repo;
     // _currentTag = currentTag;
@@ -137,14 +139,14 @@ bool ESPOTAGitHub::_resolveRedirects() {
             return false;
         }
 
- 
-    client.print(F("GET "));
-    client.print(path);
-    client.print(F(" HTTP/1.1\r\n"));
-    client.print(F("Host: ") ); client.print( host );
-    client.print(F("\r\n"));
-    client.print(F("User-Agent: ESP_OTA_GitHubArduinoLibrary\r\n"));
-    client.print(F("Connection: close\r\n\r\n"));
+    ESPOTAGitHub::_HTTPget(client, host.c_str(), path.c_str(), nullptr );
+    // client.print(F("GET "));
+    // client.print(path);
+    // client.print(F(" HTTP/1.1\r\n"));
+    // client.print(F("Host: ") ); client.print( host );
+    // client.print(F("\r\n"));
+    // client.print(F("User-Agent: ESP_OTA_GitHubArduinoLibrary\r\n"));
+    // client.print(F("Connection: close\r\n\r\n"));
 
         // client.print(String("GET ") + path + " HTTP/1.1\r\n" +
         //     "Host: " + host + "\r\n" +
@@ -227,18 +229,21 @@ bool ESPOTAGitHub::checkUpgrade() {
         return false;
     }
 
-    client.print(F("GET /repos/"));
-    //client.print(url);
-    client.print( _user );
-    client.print('/');
-    client.print( _repo);
-    client.print(F("/releases/latest"));
+    ESPOTAGitHub::_HTTPget(client, GHOTA_HOST, "repos", _user, _repo, "releases/latest", nullptr );
+
+    // client.print(F("GET /repos/"));
+    // //client.print(url);
+    // client.print( _user );
+    // client.print('/');
+    // client.print( _repo);
+    // client.print(F("/releases/latest"));
     
-    client.print(F(" HTTP/1.1\r\n"));
-    client.print(F("Host: ") ); client.print( GHOTA_HOST );
-    client.print(F("\r\n"));
-    client.print(F("User-Agent: ESP_OTA_GitHubArduinoLibrary\r\n"));
-    client.print(F("Connection: close\r\n\r\n"));
+    // client.print(F(" HTTP/1.1\r\n"));
+    // client.print(F("Host: ") ); client.print( GHOTA_HOST );
+    // client.print(F("\r\n"));
+    // client.print(F("User-Agent: ESP8266\r\n"));
+    // client.print(F("Connection: close\r\n\r\n"));
+    
     client.setTimeout(GHOTA_TIMEOUT);
 
     OTArunStart;

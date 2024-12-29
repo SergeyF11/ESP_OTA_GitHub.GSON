@@ -6,7 +6,7 @@
   and commercial use so long as any changes/improvements are freely shared with
   the community under the same terms.
 */
-
+#pragma once
 #ifndef ESP_OTA_GitHub_h
 #define ESP_OTA_GitHub_h
 #define ESPOTAGitHub_DEBUG 
@@ -80,6 +80,26 @@ struct urlDetails_t : public Printable {
 	};
 };
 
+// namespace myHTTP_Request {
+// 	void myHTTPGet(WiFiClientSecure& client, const char* host, ... ){
+// 		    va_list args;
+//     		va_start(args, host);
+
+// 		client.print(F("GET "));
+// 		while(true) {
+// 			char * path = va_arg(args, char*);
+// 			if ( path == nullptr) break;
+// 			if ( path[0] != '/' ) client.print('/');
+// 			client.print(path);
+// 		}
+// 			va_end(args);
+// 		client.print(F(" HTTP/1.1\r\n"));
+// 		client.print(F("Host: ") ); client.print( host );
+// 		client.print(F("\r\n"));
+// 		client.print(F("User-Agent: ESP_OTA_GitHubArduinoLibrary\r\n"));
+// 		client.print(F("Connection: close\r\n\r\n"));
+// 	};
+// };
 
 class ESPOTAGitHub {
 	public:
@@ -95,8 +115,32 @@ class ESPOTAGitHub {
 		//#if defined CLEANING
 		bool clean();
 		//#endif
+	static void _HTTPget(WiFiClientSecure& client, const char* host, ... ) {
+		va_list args;
+		va_start(args, host);
 
+		client.print(F("GET "));
+		//OTAdebugPrint(F("GET "));
+
+		while(true) {
+			char * path = va_arg(args, char*);
+			if ( path == nullptr) break;
+			if ( path[0] != '/' ) {
+				client.print('/');
+				//OTAdebugPrint('/');
+			}
+			client.print(path);
+			//OTAdebugPrint(path);
+		}
+		//OTAdebugPrintln();
+		va_end(args);
+		client.println(F(" HTTP/1.1"));
+		client.print(F("Host: ") ); client.println( host );
+		client.println(F("User-Agent: ESP8266\r\n" \
+						"Connection: close\r\n"));
+	};
 	private:
+		
 		void _init(const char* user, const char* repo, const char* currentTag, const char* binFile, bool preRelease) {
 			_user = user;
 			_repo = repo;
