@@ -9,13 +9,12 @@
 #pragma once
 #ifndef ESP_OTA_GitHub_h
 #define ESP_OTA_GitHub_h
-#define ESPOTAGitHub_DEBUG 
+//#define ESPOTAGitHub_DEBUG 
 
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
 #include <WiFiClientSecure.h>
-#include "GitHubCertRoot.h"
-//#include <ArduinoJson.h>
+//#include "GitHubCertRoot.h"
 //#include <time.h>
 #include <GSON.h>
 
@@ -74,8 +73,9 @@ struct urlDetails_t : public Printable {
 		out += p.print("Port:");
 		out += p.println(port);
 
-		out += p.print("Path:");
-		out += p.println(path);
+		out += p.print("Path:\"");
+		out += p.print(path);
+		out += p.println('"');
 		return out;
 	};
 };
@@ -109,30 +109,32 @@ class ESPOTAGitHub {
 		bool checkUpgrade();
 		bool doUpgrade();
 		bool doUpgrade(String&);
+		bool clean();
 		String getLastError();
 		String getUpgradeURL();
 		String getLatestTag();
+		String releaseNote;
 		//#if defined CLEANING
-		bool clean();
+		
 		//#endif
 	static void _HTTPget(WiFiClientSecure& client, const char* host, ... ) {
 		va_list args;
 		va_start(args, host);
 
 		client.print(F("GET "));
-		//OTAdebugPrint(F("GET "));
+		OTAdebugPrint(F("GET "));
 
 		while(true) {
-			char * path = va_arg(args, char*);
+			auto path = va_arg(args, const char*);
 			if ( path == nullptr) break;
 			if ( path[0] != '/' ) {
 				client.print('/');
-				//OTAdebugPrint('/');
+				OTAdebugPrint('/');
 			}
 			client.print(path);
-			//OTAdebugPrint(path);
+			OTAdebugPrint(path);
 		}
-		//OTAdebugPrintln();
+		OTAdebugPrint(F(" to host:")); OTAdebugPrintln( host ); 
 		va_end(args);
 		client.println(F(" HTTP/1.1"));
 		client.print(F("Host: ") ); client.println( host );
